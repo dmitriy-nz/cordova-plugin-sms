@@ -221,9 +221,6 @@ public class SMSPlugin
                     } else {
                         sms.sendTextMessage(address, null, text, sentIntent, null);
                     }
-
-
-                    sms.sendTextMessage(address, null, text, sentIntent, (PendingIntent)null);
                 }
             } else {
                 PendingIntent sentIntent = PendingIntent.getActivity((Context)this.cordova.getActivity(), (int)0, (Intent)new Intent("android.intent.action.VIEW"), (int)0);
