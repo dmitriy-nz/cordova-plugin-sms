@@ -11,11 +11,14 @@ import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -29,7 +32,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 public class SMSPlugin
-  extends CordovaPlugin {
+        extends CordovaPlugin {
   private static final String LOGTAG = "SMSPlugin";
 
   public static final String ACTION_SET_OPTIONS = "setOptions";
@@ -200,13 +203,14 @@ public class SMSPlugin
     return null;
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
   private PluginResult sendSMS(JSONArray addressList, String text, CallbackContext callbackContext) {
     Log.d(LOGTAG, ACTION_SEND_SMS);
     if (this.cordova.getActivity().getPackageManager().hasSystemFeature("android.hardware.telephony")) {
       int n;
       if ((n = addressList.length()) > 0) {
         PendingIntent sentIntent = PendingIntent.getBroadcast((Context) this.cordova.getActivity(), (int) 0, (Intent) new Intent("SENDING_SMS"), (int) 0);
-        SmsManager sms = SmsManager.getDefault();
+        SmsManager sms = SmsManager.getSmsManagerForSubscriptionId(0);
         for (int i = 0; i < n; ++i) {
           String address;
           if ((address = addressList.optString(i)).length() <= 0) continue;
